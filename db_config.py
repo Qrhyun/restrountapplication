@@ -1,13 +1,16 @@
-#python与mysql连接
-import mysql.connector
-
+from mysql.connector import pooling
 db_config = {
-    'user': 'QRH',
-    'password': 'abc.1234',
+    'user': 'restrount',
+    'password': 'abc.123',
     'host': '47.115.226.248',
     'port': '3306',
     'database': 'restrount'
 }
+connection_pool = pooling.MySQLConnectionPool(
+    pool_name="mypool",
+    pool_size=10,
+    **db_config
+)
 
 def get_db_connection():
-    return mysql.connector.connect(**db_config)
+    return connection_pool.get_connection()
