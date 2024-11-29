@@ -5,6 +5,8 @@ from db_config import get_db_connection
 
 app = Flask(__name__)
 
+
+
 @app.route('/recent_meal', methods=['GET'])
 def recent_meal():
     user_id = request.args.get('user_id', type=int)
@@ -17,7 +19,7 @@ def recent_meal():
     cursor.close()
     conn.close()
     return jsonify(results)
-    print(1)
+
 
 @app.route('/remaining_money', methods=['GET'])
 def remaining_money():
