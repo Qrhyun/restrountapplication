@@ -2,9 +2,9 @@
 # 用于查询用户最近一次的消费记录和用户的剩余金额
 from flask import Flask, request, jsonify
 from db_config import get_db_connection
-
+from flask_cors import CORS
 app = Flask(__name__)
-
+CORS(app)
 
 
 @app.route('/recent_meal', methods=['GET'])
