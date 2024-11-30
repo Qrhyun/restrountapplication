@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Query</title>
+
+    <!-- Vuetify CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.min.css" rel="stylesheet">
+
+    <!-- Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+
+    <!-- Axios for API calls -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- Custom Styles -->
+    <style>
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #3f51b5;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #e0e0e0;
+        }
+        .table-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <v-app>
+            <v-container>
+                <v-row>
+                    <v-col cols="12" md="6">
+                        <v-text-field
+                            v-model="userId"
+                            label="Enter User ID"
+                            type="number"
+                            outlined
+                        ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                        <v-btn
+                            color="primary"
+                            @click="fetchRecentMeal"
+                            :disabled="!userId"
+                        >
+                            Get Recent Meal
+                        </v-btn>
+                    </v-col>
+                </v-row>
+
+                <v-divider></v-divider>
+
+                <div class="table-container" v-if="recentMealResult.length > 0">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Dish Name</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="meal in recentMealResult" :key="meal.DishID">
+                                <td>{{ meal.DishName }}</td>
+                                <td>{{ meal.Price }}</td>
+                                <td>{{ meal.Quantity }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <v-alert v-if="recentMealResult.length === 0" type="info" dismissible>
+                    No recent meals found.
+                </v-alert>
+            </v-container>
+        </v-app>
+    </div>
+
+    <!-- Vuetify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.js"></script>
+
+    <script>
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify(),
+            data: {
+                userId: '',
+                recentMealResult: []
+            },
+            methods: {
+                async fetchRecentMeal() {
+                    try {
+                        console.log('Fetching recent meal for user ID:', this.userId);
+                        const response = await axios.get('http://127.0.0.1:5000/recent_meal', {
+                            params: { user_id: this.userId }
+                        });
+                        console.log('Response data:', response.data);
+                        this.recentMealResult = response.data;
+                    } catch (error) {
+                        console.error('Error fetching recent meal:', error);
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
