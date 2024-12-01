@@ -27,7 +27,9 @@ def remaining_money():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.callproc('GetRemainingMoney', [user_id])
-    result = cursor.fetchone()
+    result = []
+    for res in cursor.stored_results():
+        result.extend(res.fetchall())
     cursor.close()
     conn.close()
     return jsonify(result)
