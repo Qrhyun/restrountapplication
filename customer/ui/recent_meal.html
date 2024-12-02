@@ -90,6 +90,24 @@
                 <v-alert v-if="recentMealResult.length === 0" type="info" dismissible>
                     No recent meals found.
                 </v-alert>
+
+                <v-divider></v-divider>
+
+                <v-row>
+                    <v-col cols="12" md="6">
+                        <v-btn
+                            color="secondary"
+                            @click="fetchRemainingMoney"
+                            :disabled="!userId"
+                        >
+                            Get Remaining Money
+                        </v-btn>
+                    </v-col>
+                </v-row>
+
+                <v-alert v-if="remainingMoney !== null" type="success" dismissible>
+                    Remaining Money: {{ remainingMoney }}
+                </v-alert>
             </v-container>
         </v-app>
     </div>
@@ -103,7 +121,8 @@
             vuetify: new Vuetify(),
             data: {
                 userId: '',
-                recentMealResult: []
+                recentMealResult: [],
+                remainingMoney: null
             },
             methods: {
                 async fetchRecentMeal() {
@@ -116,6 +135,22 @@
                         this.recentMealResult = response.data;
                     } catch (error) {
                         console.error('Error fetching recent meal:', error);
+                    }
+                },
+                async fetchRemainingMoney() {
+                    try {
+                        console.log('Fetching remaining money for user ID:', this.userId);
+                        const response = await axios.get('http://127.0.0.1:5000/remaining_money', {
+                            params: { user_id: this.userId }
+                        });
+                        console.log('Response data:', response.data);
+                        if (response.data.length > 0) {
+                            this.remainingMoney = response.data[0].money;
+                        } else {
+                            this.remainingMoney = 'No data available';
+                        }
+                    } catch (error) {
+                        console.error('Error fetching remaining money:', error);
                     }
                 }
             }
