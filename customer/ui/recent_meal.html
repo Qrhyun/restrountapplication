@@ -17,57 +17,135 @@
 
     <!-- Custom Styles -->
     <style>
+        body {
+            background: linear-gradient(135deg, #3f51b5, #4caf50);
+            font-family: 'Roboto', sans-serif;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .v-btn {
+            font-weight: bold;
+            border-radius: 8px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .table-container {
+            margin-top: 30px;
+        }
         table {
             width: 100%;
-            margin-top: 20px;
             border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         th, td {
-            padding: 12px;
+            padding: 16px;
             text-align: left;
-            border: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
         }
         th {
             background-color: #3f51b5;
             color: white;
+            font-size: 16px;
+        }
+        td {
+            font-size: 14px;
         }
         tr:nth-child(even) {
-            background-color: #f2f2f2;
+            background-color: #f9f9f9;
         }
         tr:hover {
-            background-color: #e0e0e0;
+            background-color: #f1f1f1;
         }
-        .table-container {
+        .v-alert {
             margin-top: 20px;
+            border-radius: 8px;
+        }
+        .v-divider {
+            margin: 20px 0;
+        }
+        .title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #3f51b5;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .input-container {
+            margin-bottom: 20px;
+        }
+        .input-field {
+            border-radius: 8px;
+        }
+        .v-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
     </style>
 </head>
 <body>
     <div id="app">
         <v-app>
-            <v-container>
-                <v-row>
+            <v-container class="container">
+                <div class="title">Personal Query Dashboard</div>
+
+                <!-- User ID Input -->
+                <v-row class="input-container" align="center" justify="center">
                     <v-col cols="12" md="6">
                         <v-text-field
                             v-model="userId"
                             label="Enter User ID"
                             type="number"
                             outlined
+                            dense
+                            class="input-field"
                         ></v-text-field>
                     </v-col>
-                    <v-col cols="12" md="6">
+                </v-row>
+
+                <!-- Action Buttons -->
+                <v-row align="center" justify="center">
+                    <v-col cols="12" md="4">
                         <v-btn
                             color="primary"
                             @click="fetchRecentMeal"
                             :disabled="!userId"
+                            block
                         >
                             Get Recent Meal
                         </v-btn>
                     </v-col>
+                    <v-col cols="12" md="4">
+                        <v-btn
+                            color="secondary"
+                            @click="fetchRemainingMoney"
+                            :disabled="!userId"
+                            block
+                        >
+                            Get Remaining Money
+                        </v-btn>
+                    </v-col>
+                    <v-col cols="12" md="4">
+                        <v-btn
+                            color="success"
+                            @click="fetchTotalSpent"
+                            :disabled="!userId"
+                            block
+                        >
+                            Get Total Spent
+                        </v-btn>
+                    </v-col>
                 </v-row>
 
-                <v-divider></v-divider>
-
+                <!-- Recent Meal Table -->
                 <div class="table-container" v-if="recentMealResult.length > 0">
                     <table>
                         <thead>
@@ -87,37 +165,17 @@
                     </table>
                 </div>
 
+                <!-- No Recent Meal Alert -->
                 <v-alert v-if="recentMealResult.length === 0" type="info" dismissible>
                     No recent meals found.
                 </v-alert>
 
-                <v-divider></v-divider>
-
-                <v-row>
-                    <v-col cols="12" md="6">
-                        <v-btn
-                            color="secondary"
-                            @click="fetchRemainingMoney"
-                            :disabled="!userId"
-                        >
-                            Get Remaining Money
-                        </v-btn>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                        <v-btn
-                            color="success"
-                            @click="fetchTotalSpent"
-                            :disabled="!userId"
-                        >
-                            Get Total Spent
-                        </v-btn>
-                    </v-col>
-                </v-row>
-
+                <!-- Remaining Money Alert -->
                 <v-alert v-if="remainingMoney !== null" type="success" dismissible>
                     Remaining Money: {{ remainingMoney }}
                 </v-alert>
 
+                <!-- Total Spent Alert -->
                 <v-alert v-if="totalSpent !== null" type="success" dismissible>
                     Total Spent: {{ totalSpent }}
                 </v-alert>
@@ -141,11 +199,9 @@
             methods: {
                 async fetchRecentMeal() {
                     try {
-                        console.log('Fetching recent meal for user ID:', this.userId);
                         const response = await axios.get('http://127.0.0.1:5000/recent_meal', {
                             params: { user_id: this.userId }
                         });
-                        console.log('Response data:', response.data);
                         this.recentMealResult = response.data;
                     } catch (error) {
                         console.error('Error fetching recent meal:', error);
@@ -153,11 +209,9 @@
                 },
                 async fetchRemainingMoney() {
                     try {
-                        console.log('Fetching remaining money for user ID:', this.userId);
                         const response = await axios.get('http://127.0.0.1:5000/remaining_money', {
                             params: { user_id: this.userId }
                         });
-                        console.log('Response data:', response.data);
                         if (response.data.length > 0) {
                             this.remainingMoney = response.data[0].money;
                         } else {
@@ -169,11 +223,9 @@
                 },
                 async fetchTotalSpent() {
                     try {
-                        console.log('Fetching total spent for user ID:', this.userId);
                         const response = await axios.get('http://127.0.0.1:5000/total_spent', {
                             params: { user_id: this.userId }
                         });
-                        console.log('Response data:', response.data);
                         if (response.data.length > 0) {
                             this.totalSpent = response.data[0].total_spent;
                         } else {
