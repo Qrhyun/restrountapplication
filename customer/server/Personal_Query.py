@@ -34,16 +34,27 @@ def remaining_money():
     conn.close()
     return jsonify(result)
 
+
 @app.route('/total_spent', methods=['GET'])
 def total_spent():
     user_id = request.args.get('user_id', type=int)
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
+
+    # 执行查询
     cursor.execute('SELECT GetTotalSpent(%s) AS total_spent', (user_id,))
+
+    # 获取单行结果
     result = cursor.fetchone()
+
     cursor.close()
     conn.close()
-    return jsonify(result)
+
+    # 确保返回的格式是一个包含字典的数组
+    if result:
+        return jsonify([result])  # 包装成数组
+    else:
+        return jsonify([])  # 如果没有结果，返回一个空数组
 
 
 if __name__ == '__main__':
