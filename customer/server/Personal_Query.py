@@ -34,6 +34,16 @@ def remaining_money():
     conn.close()
     return jsonify(result)
 
+@app.route('/total_spent', methods=['GET'])
+def total_spent():
+    user_id = request.args.get('user_id', type=int)
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute('SELECT GetTotalSpent(%s) AS total_spent', (user_id,))
+    result = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return jsonify(result)
 
 
 if __name__ == '__main__':
