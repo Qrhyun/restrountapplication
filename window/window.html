@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Window Sales Query</title>
+
+    <!-- Vuetify CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.min.css" rel="stylesheet">
+
+    <!-- Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+
+    <!-- Axios for API calls -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- Custom Styles -->
+    <style>
+        /* Background Image */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('https://th.bing.com/th/id/R.a54d245106dc445f4dee8152b5e3e2ff?rik=LkYz8nW3PKUQoQ&riu=http%3a%2f%2fpic2.bbzhi.com%2fmeishibizhi%2fmeishidacan%2fmeishidacan_123250_12.jpg&ehk=CG3ttn1qM3588YkgJFl%2f0Nsu4Trspjbgstu%2bvuh%2b%2fs8%3d&risl=&pid=ImgRaw&r=0'); /* Replace with your food image URL */
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            color:#4CAF50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        /* Container styling */
+        .v-container {
+            background: rgba(0, 0, 0, 0.6); /* Dark semi-transparent background */
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 1200px;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Title styling */
+        .title {
+            text-align: center;
+            color: #ffffff;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        /* Input and Button styling */
+        .v-btn {
+            font-weight: bold;
+            border-radius: 20px;
+            padding: 12px 24px;
+            font-size: 18px;
+        }
+
+        .v-btn.primary {
+            background-color: #FF5722;
+            color: white;
+        }
+
+        .v-btn.secondary {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .v-btn.success {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        /* Input field style */
+        .v-text-field {
+            background-color: transparent; /* Make input field background transparent */
+            border-radius: 10px;
+            font-size: 16px;
+            padding: 10px;
+            color: #fff; /* Text color in input box */
+            border: 1px solid #fff; /* White border for visibility */
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        th {
+            background-color: #3f51b5;
+            color: white;
+            font-size: 18px;
+        }
+
+        td {
+            font-size: 16px;
+            color: #333;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Alert container */
+        .alert-container {
+            margin-top: 30px;
+        }
+
+        /* Divider styling */
+        .v-divider {
+            margin: 20px 0;
+        }
+
+        /* Flexbox layout adjustments */
+        .v-row {
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .v-col {
+            margin: 10px 0;
+        }
+
+        .table-container {
+            margin-top: 30px;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            .v-container {
+                padding: 15px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .v-btn {
+                font-size: 14px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="app">
+        <v-app>
+            <v-container>
+                <div class="title">Window Total Sales Query</div>
+
+                <!-- User ID Input -->
+                <v-row>
+                    <v-col cols="12" md="6">
+                        <v-text-field
+                            v-model="windowId"
+                            label="Enter Window ID"
+                            type="number"
+                            outlined
+                            dense
+                            class="input-field"
+                        ></v-text-field>
+                    </v-col>
+                </v-row>
+
+                <!-- Action Buttons -->
+                <v-row>
+                    <!-- First Button: Get Total Sales Data -->
+                    <v-col cols="12" md="6" class="d-flex justify-center">
+                        <v-btn
+                            color="primary"
+                            @click="fetchTotalSaleData"
+                            :disabled="!windowId"
+                            block
+                        >
+                            Get Total Sales Data
+                        </v-btn>
+                    </v-col>
+                </v-row>
+
+                <v-row>
+                    <!-- Second Button: Get Sale Meal Data -->
+                    <v-col cols="12" md="6" class="d-flex justify-center">
+                        <v-btn
+                            color="secondary"
+                            @click="fetchSaleMeal"
+                            :disabled="!windowId"
+                            block
+                        >
+                            Get Sale Meal Data
+                        </v-btn>
+                    </v-col>
+                </v-row>
+
+                <v-divider></v-divider>
+
+                <!-- Total Sales Data Table -->
+                <div class="table-container" v-if="totalSaleData.length > 0">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Dish Name</th>
+                                <th>Total Quantity Sold</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="dish in totalSaleData" :key="dish.DishID">
+                                <td>{{ dish.DishName }}</td>
+                                <td>{{ dish.TotalQuantitySold }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Sale Meal Table -->
+                <div class="table-container" v-if="saleMealData.length > 0">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Meal Name</th>
+                                <th>Quantity Sold</th>
+                                <th>Sale Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="meal in saleMealData" :key="meal.MealID">
+                                <td>{{ meal.MealName }}</td>
+                                <td>{{ meal.QuantitySold }}</td>
+                                <td>{{ meal.SaleDate }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Alerts -->
+                <div class="alert-container">
+                    <v-alert v-if="totalSaleData.length === 0" type="info" dismissible>
+                        No total sales data found for this window.
+                    </v-alert>
+                    <v-alert v-if="saleMealData.length === 0" type="info" dismissible>
+                        No sale meal data found for this window.
+                    </v-alert>
+                </div>
+            </v-container>
+        </v-app>
+    </div>
+
+    <!-- Vuetify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.5.10/dist/vuetify.js"></script>
+
+    <script>
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify(),
+            data: {
+                windowId: '',
+                totalSaleData: [],
+                saleMealData: []
+            },
+            methods: {
+                async fetchTotalSaleData() {
+                    try {
+                        console.log('Fetching total sales data for window ID:', this.windowId);
+                        const response = await axios.get('http://127.0.0.1:5000/total_sales_data', {
+                            params: { window_id: this.windowId }
+                        });
+                        console.log('Total Sales Data:', response.data);
+                        this.totalSaleData = response.data;
+                    } catch (error) {
+                        console.error('Error fetching total sales data:', error);
+                    }
+                },
+                async fetchSaleMeal() {
+                    try {
+                        console.log('Fetching sale meal data for window ID:', this.windowId);
+                        const response = await axios.get('http://127.0.0.1:5000/sale_meal', {
+                            params: { window_id: this.windowId }
+                        });
+                        console.log('Sale Meal Data:', response.data);
+                        this.saleMealData = response.data;
+                    } catch (error) {
+                        console.error('Error fetching sale meal data:', error);
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
