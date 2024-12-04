@@ -57,5 +57,26 @@ def total_spent():
         return jsonify([])  # 如果没有结果，返回一个空数组
 
 
+
+@app.route('/dine_in', methods=['GET'])
+def dine_in():
+    input_Bid = request.args.get('Bid', type=int)
+    input_Vid = request.args.get('Vid', type=int)
+    input_Bnum = request.args.get('Bnum', type=int)
+
+    if not input_Bid or not input_Vid or not input_Bnum:
+        return jsonify({'error': 'Bid, Vid, and Bnum are required'}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.callproc('DineInProcess', [input_Bid, input_Vid, input_Bnum])
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({'message': 'Dine-in process completed successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=True)
