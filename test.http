@@ -1,5 +1,18 @@
 ###recent_meal
-GET 127.0.0.1:5000/recent_meal?user_id=1
+GET 127.0.0.1:5000/personal_query/recent_meal?user_id=1
 ###remaining_money
-GET 127.0.0.1:5000/remaining_money
-###
+GET 127.0.0.1:5000/personal_query/remaining_money?user_id=1
+###total_spent
+GET 127.0.0.1:5000/personal_querytotal_spent?user_id=1
+###view_data
+GET 127.0.0.1:5000/window/view_data?view_name=floor_1_1
+###totalwin_vegpurchases
+GET 127.0.0.1:5000/window/totalwin_vegpurchases?dish_id=1
+###gettop5windows
+GET 127.0.0.1:5000/window/gettop5windows
+###gettop5veg
+GET 127.0.0.1:5000/window/gettop5veg
+###dine_in
+GET 127.0.0.1:5000/personal_query/dine_in?Bid=1&Vid=1&Bnum=10000
+###top3_spenders
+GET 127.0.0.1:5000/personal_query/top3_spenders
