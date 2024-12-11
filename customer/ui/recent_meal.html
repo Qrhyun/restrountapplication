@@ -18,29 +18,40 @@
     <!-- Custom Styles -->
     <style>
         body {
-            background: linear-gradient(135deg, #3f51b5, #4caf50);
-            font-family: 'Roboto', sans-serif;
-            color: #fff;
             margin: 0;
-            padding: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .v-application--wrap {
+            min-height: 100vh;
+            background: #f4f5f7;
+        }
+
+        .sidebar {
+            background: #3f51b5;
+            color: white;
+            height: 100%;
+        }
+
+        .sidebar .v-list-item {
+            color: white;
+            font-weight: bold;
+        }
+
+        .sidebar .v-list-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .content {
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .v-btn {
-            font-weight: bold;
             border-radius: 8px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .table-container {
-            margin-top: 30px;
+            font-weight: bold;
         }
 
         table {
@@ -48,7 +59,7 @@
             border-collapse: collapse;
             background-color: #fff;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         th, td {
@@ -60,11 +71,6 @@
         th {
             background-color: #3f51b5;
             color: white;
-            font-size: 16px;
-        }
-
-        td {
-            font-size: 14px;
         }
 
         tr:nth-child(even) {
@@ -74,214 +80,121 @@
         tr:hover {
             background-color: #f1f1f1;
         }
-
-        .v-alert {
-            margin-top: 20px;
-            border-radius: 8px;
-        }
-
-        .v-divider {
-            margin: 20px 0;
-        }
-
-        .title {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #3f51b5;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .input-container {
-            margin-bottom: 20px;
-        }
-
-        .input-field {
-            border-radius: 8px;
-        }
-
-        .v-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
     </style>
 </head>
 <body>
     <div id="app">
         <v-app>
-            <v-container class="container">
-                <!-- Title -->
-                <div class="title">Personal Query and Dine-In Process</div>
-
-                <!-- User ID Input -->
-                <v-row class="input-container" align="center" justify="center">
-                    <v-col cols="12" md="6">
-                        <v-text-field
-                            v-model="userId"
-                            label="Enter User ID"
-                            type="number"
-                            outlined
-                            dense
-                            class="input-field"
-                        ></v-text-field>
-                    </v-col>
-                </v-row>
-
-                <!-- Action Buttons for User Info -->
-                <v-row align="center" justify="center">
-                    <v-col cols="12" md="4">
-                        <v-btn
-                            color="primary"
-                            @click="fetchRecentMeal"
-                            :disabled="!userId"
-                            block
-                        >
-                            Get Recent Meal
-                        </v-btn>
-                    </v-col>
-                    <v-col cols="12" md="4">
-                        <v-btn
-                            color="secondary"
-                            @click="fetchRemainingMoney"
-                            :disabled="!userId"
-                            block
-                        >
-                            Get Remaining Money
-                        </v-btn>
-                    </v-col>
-                    <v-col cols="12" md="4">
-                        <v-btn
-                            color="success"
-                            @click="fetchTotalSpent"
-                            :disabled="!userId"
-                            block
-                        >
-                            Get Total Spent
-                        </v-btn>
-                    </v-col>
-                </v-row>
-
-                <!-- Recent Meal Table -->
-                <div class="table-container" v-if="recentMealResult.length > 0">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Dish Name</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="meal in recentMealResult" :key="meal.DishID">
-                                <td>{{ meal.DishName }}</td>
-                                <td>{{ meal.Price }}</td>
-                                <td>{{ meal.Quantity }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Dine-In Inputs -->
-                <div class="title">Dine-In Process</div>
+            <v-container fluid>
                 <v-row>
-                    <v-col cols="12" md="4">
-                        <v-text-field
-                            v-model="Bid"
-                            label="Enter Restaurant ID (Bid)"
-                            type="number"
-                            outlined
-                            dense
-                        ></v-text-field>
+                    <!-- Sidebar -->
+                    <v-col cols="12" md="3" class="sidebar">
+                        <v-list dense>
+                            <v-list-item @click="activeTab = 'personal_query'">
+                                <v-list-item-title>Personal Query</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @click="activeTab = 'dine_in'">
+                                <v-list-item-title>Dine-In Process</v-list-item-title>
+                            </v-list-item>
+                        </v-list>
                     </v-col>
-                    <v-col cols="12" md="4">
-                        <v-text-field
-                            v-model="Vid"
-                            label="Enter Dish ID (Vid)"
-                            type="number"
-                            outlined
-                            dense
-                        ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4">
-                        <v-text-field
-                            v-model="Bnum"
-                            label="Enter Number of People (Bnum)"
-                            type="number"
-                            outlined
-                            dense
-                        ></v-text-field>
+
+                    <!-- Content -->
+                    <v-col cols="12" md="9">
+                        <div v-if="activeTab === 'personal_query'" class="content">
+                            <h2>Personal Query</h2>
+                            <v-text-field
+                                v-model="userId"
+                                label="Enter User ID"
+                                type="number"
+                                outlined
+                                dense
+                            ></v-text-field>
+                            <v-row>
+                                <v-col cols="12" md="4">
+                                    <v-btn color="primary" @click="fetchRecentMeal" :disabled="!userId" block>
+                                        Get Recent Meal
+                                    </v-btn>
+                                </v-col>
+                                <v-col cols="12" md="4">
+                                    <v-btn color="secondary" @click="fetchRemainingMoney" :disabled="!userId" block>
+                                        Get Remaining Money
+                                    </v-btn>
+                                </v-col>
+                                <v-col cols="12" md="4">
+                                    <v-btn color="success" @click="fetchTotalSpent" :disabled="!userId" block>
+                                        Get Total Spent
+                                    </v-btn>
+                                </v-col>
+                            </v-row>
+
+                            <div v-if="recentMealResult.length > 0" class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Dish Name</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="meal in recentMealResult" :key="meal.DishID">
+                                            <td>{{ meal.DishName }}</td>
+                                            <td>{{ meal.Price }}</td>
+                                            <td>{{ meal.Quantity }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <v-alert v-if="remainingMoney !== null" type="success" dismissible>
+                                Remaining Money: {{ remainingMoney }}
+                            </v-alert>
+                            <v-alert v-if="totalSpent !== null" type="success" dismissible>
+                                Total Spent: {{ totalSpent }}
+                            </v-alert>
+                        </div>
+
+                        <div v-if="activeTab === 'dine_in'" class="content">
+                            <h2>Dine-In Process</h2>
+                            <v-row>
+                                <v-col cols="12" md="4">
+                                    <v-text-field
+                                        v-model="Bid"
+                                        label="Enter Restaurant ID (Bid)"
+                                        type="number"
+                                        outlined
+                                        dense
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="4">
+                                    <v-text-field
+                                        v-model="Vid"
+                                        label="Enter Dish ID (Vid)"
+                                        type="number"
+                                        outlined
+                                        dense
+                                    ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="4">
+                                    <v-text-field
+                                        v-model="Bnum"
+                                        label="Enter Number of People (Bnum)"
+                                        type="number"
+                                        outlined
+                                        dense
+                                    ></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-btn color="primary" @click="fetchDineIn" :disabled="!Bid || !Vid || !Bnum" block>
+                                Process Dine-In
+                            </v-btn>
+                            <v-alert v-if="dineInMessage" type="info" dismissible>
+                                {{ dineInMessage }}
+                            </v-alert>
+                        </div>
                     </v-col>
                 </v-row>
-
-                <!-- Dine-In Process Button -->
-                <v-row>
-                    <v-col cols="12" md="6" class="d-flex justify-center">
-                        <v-btn
-                            color="primary"
-                            @click="fetchDineIn"
-                            :disabled="!Bid || !Vid || !Bnum"
-                            block
-                        >
-                            Process Dine-In
-                        </v-btn>
-                    </v-col>
-                </v-row>
-
-                <!-- Response Message for Dine-In -->
-                <div v-if="dineInMessage" class="table-container">
-                    <v-alert type="info" dismissible>{{ dineInMessage }}</v-alert>
-                </div>
-
-                <!-- No Recent Meal Alert -->
-                <v-alert v-if="recentMealResult.length === 0" type="info" dismissible>
-                    No recent meals found.
-                </v-alert>
-
-                <!-- Remaining Money Alert -->
-                <v-alert v-if="remainingMoney !== null" type="success" dismissible>
-                    Remaining Money: {{ remainingMoney }}
-                </v-alert>
-
-                <!-- Total Spent Alert -->
-                <v-alert v-if="totalSpent !== null" type="success" dismissible>
-                    Total Spent: {{ totalSpent }}
-                </v-alert>
-
-                <!-- Top 3 Spenders Button -->
-                <v-row align="center" justify="center">
-    <v-col cols="12" md="4">
-        <v-btn
-            color="warning"
-            @click="fetchTop3Spenders"
-            :disabled="!userId"
-            block
-        >
-            Get Top 3 Spenders
-        </v-btn>
-    </v-col>
-</v-row>
-
-<!-- Top 3 Spenders Table -->
-<div class="table-container" v-if="top3Spenders.length > 0">
-    <table>
-        <thead>
-            <tr>
-                <th>User ID (Bid)</th>
-                <th>User Name (Bname)</th>
-                <th>Total Spent</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="spender in top3Spenders" :key="spender.Bid">
-                <td>{{ spender.Bid }}</td>
-                <td>{{ spender.Bname }}</td>
-                <td>{{ spender.TotalSpent }}</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-
             </v-container>
         </v-app>
     </div>
@@ -294,6 +207,7 @@
             el: '#app',
             vuetify: new Vuetify(),
             data: {
+                activeTab: 'personal_query',
                 userId: '',
                 recentMealResult: [],
                 remainingMoney: null,
@@ -301,11 +215,7 @@
                 Bid: '',
                 Vid: '',
                 Bnum: '',
-                dineInMessage: '',
-                top3Spenders: [],
-                top5Windows: [],
-                top5Veg: [],
-                totalWinVegPurchases: null
+                dineInMessage: ''
             },
             methods: {
                 async fetchRecentMeal() {
@@ -323,11 +233,7 @@
                         const response = await axios.get('http://127.0.0.1:5000/personal_query/remaining_money', {
                             params: { user_id: this.userId }
                         });
-                        if (response.data.length > 0) {
-                            this.remainingMoney = response.data[0].money;
-                        } else {
-                            this.remainingMoney = 'No data available';
-                        }
+                        this.remainingMoney = response.data.length > 0 ? response.data[0].money : 'No data available';
                     } catch (error) {
                         console.error('Error fetching remaining money:', error);
                     }
@@ -337,11 +243,7 @@
                         const response = await axios.get('http://127.0.0.1:5000/personal_query/total_spent', {
                             params: { user_id: this.userId }
                         });
-                        if (response.data.length > 0) {
-                            this.totalSpent = response.data[0].total_spent;
-                        } else {
-                            this.totalSpent = 'No data available';
-                        }
+                        this.totalSpent = response.data.length > 0 ? response.data[0].total_spent : 'No data available';
                     } catch (error) {
                         console.error('Error fetching total spent:', error);
                     }
@@ -349,38 +251,16 @@
                 async fetchDineIn() {
                     try {
                         const response = await axios.get('http://127.0.0.1:5000/personal_query/dine_in', {
-                            params: {
-                                Bid: this.Bid,
-                                Vid: this.Vid,
-                                Bnum: this.Bnum
-                            }
+                            params: { Bid: this.Bid, Vid: this.Vid, Bnum: this.Bnum }
                         });
-                        if (response.data.message) {
-                            this.dineInMessage = response.data.message;
-                        } else {
-                            this.dineInMessage = 'Unexpected response format';
-                        }
+                        this.dineInMessage = response.data.message || 'Unexpected response format';
                     } catch (error) {
-                        if (error.response && error.response.data && error.response.data.error) {
-                            this.dineInMessage = error.response.data.error;
-                        } else {
-                            this.dineInMessage = 'Error fetching dine-in process data';
-                        }
+                        this.dineInMessage = error.response?.data?.error || 'Error fetching dine-in process data';
                         console.error('Error fetching dine-in process:', error);
-                    }
-                },
-                async fetchTop3Spenders() {
-                    try {
-                        const response = await axios.get('http://127.0.0.1:5000/personal_query/top3_spenders');
-                        this.top3Spenders = response.data;
-                        console.log(this)
-                    } catch (error) {
-                        console.error('Error fetching top 3 spenders:', error);
                     }
                 }
             }
         });
     </script>
-
 </body>
 </html>
