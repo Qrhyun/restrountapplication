@@ -1,7 +1,6 @@
 from flask import Flask, render_template
 from customer.server.Personal_Query import personal_query_app
 from window.server.window import window_app
-
 app = Flask(__name__,template_folder='.')
 
 # Register blueprints

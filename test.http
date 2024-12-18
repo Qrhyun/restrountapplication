@@ -1,6 +1,8 @@
 ###recent_meal
+
 GET 127.0.0.1:5000/personal_query/recent_meal?user_id=1
 ###remaining_money
+
 GET 127.0.0.1:5000/personal_query/remaining_money?user_id=1
 ###total_spent
 GET 127.0.0.1:5000/personal_querytotal_spent?user_id=1
