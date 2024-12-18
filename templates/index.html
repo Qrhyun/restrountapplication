@@ -6,25 +6,101 @@
     <title>Login Page</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: #333;
+            position: relative;
+            overflow-x: hidden; /* Prevent horizontal scrollbar */
+            transition: background 0.3s ease; /* Smooth background transition */
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 200px; /* Fixed width for the sidebar */
+            height: 100vh;
+            background: #4e8dbf; /* Soft, muted blue */
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            left: 0;
+            top: 0; /* Ensure sidebar starts from the very top */
+            z-index: 1000;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* Toggle button fixed to the right side */
+        .toggle-button {
+            position: fixed;
+            right: 20px;  /* Adjust button to the right */
+            top: 50px;    /* Button placed just below the top */
+            z-index: 1001; /* Ensure it's above the sidebar */
+            background: #4e8dbf; /* Same as sidebar */
+            color: #fff;
+            border: none;
+            border-radius: 50%; /* Make the button circular */
+            width: 50px;  /* Button width */
+            height: 50px; /* Button height */
+            cursor: pointer;
+            font-size: 30px; /* Larger icon size */
+            display: flex; /* Use flexbox */
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
+        }
+
+        .toggle-button:hover {
+            background: #357ab7; /* Slightly lighter on hover */
+        }
+
+        .toggle-button:active {
+            background: #28759f; /* Darker on click */
+        }
+
+        /* Main content */
+        .main-content {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: linear-gradient(to right, #4facfe, #00f2fe);
-            color: #333;
+            padding: 40px;
+            margin-left: 220px; /* Make space for the sidebar */
         }
 
+        /* Background box before login box appears */
+        .background-box {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-image: url('your-image-path.jpg'); /* Replace with your custom image */
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.5s ease;
+            z-index: 1; /* Keep it behind the login form */
+        }
+
+        /* Login container */
         .container {
             text-align: center;
-            background: #fff;
+            background: rgba(255, 255, 255, 0.8); /* Slightly transparent white */
             padding: 20px 40px;
-            border-radius: 10px;
+            border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             max-width: 400px;
             width: 100%;
+            transform: scale(0.9); /* Start smaller */
+            opacity: 0; /* Invisible initially */
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            z-index: 2; /* Above the background box */
+        }
+
+        .container.show {
+            transform: scale(1); /* Expand to full size */
+            opacity: 1; /* Fade in */
         }
 
         h1 {
@@ -32,12 +108,23 @@
             color: #4facfe;
         }
 
-        form {
-            margin-bottom: 15px;
+        input[type="text"], input[type="password"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: #4facfe;
+            box-shadow: 0 0 8px rgba(79, 172, 254, 0.7); /* Glowing effect */
         }
 
         button {
-            background: #4facfe;
+            background: #6ac6f1;  /* Soft blue for button */
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -45,26 +132,114 @@
             cursor: pointer;
             font-size: 16px;
             transition: background-color 0.3s ease;
+            margin: 10px 0;
+            width: 100%;
         }
 
         button:hover {
-            background: #00a9f4;
+            background: #5cb4e1;  /* Lighter hover color */
         }
 
         button:active {
-            background: #007acc;
+            background: #4fa3d1;  /* Darker on click */
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Login</h1>
-        <form action="../customer/ui/recent_meal.html" method="get">
-            <button type="submit">Go to Personal Query</button>
-        </form>
-        <form action="../window/ui/window.html" method="get">
-            <button type="submit">Go to Window</button>
-        </form>
+    <!-- Sidebar Toggle Button -->
+    <button class="toggle-button" onclick="toggleSidebar()">☰</button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <button id="loginBtn">Login</button>
+        <button id="windowBtn">Window</button>
+        <button id="personalQueryBtn">Personal</button>
     </div>
+
+    <!-- Background box (before login box appears) -->
+    <div class="background-box" id="backgroundBox" onclick="revealLoginForm()"></div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="container" id="loginContainer">
+            <h1>Login</h1>
+            <form id="loginForm">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+                <p id="message" class="hidden error-message">Incorrect username or password.</p>
+            </form>
+            <p id="successMessage" class="hidden">Login Successful</p>
+        </div>
+    </div>
+
+    <script>
+        // Function to toggle sidebar visibility
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('hidden');
+        }
+
+        // Reveal the login form by moving the background box
+        function revealLoginForm() {
+            const backgroundBox = document.getElementById('backgroundBox');
+            const loginContainer = document.getElementById('loginContainer');
+
+            // Slide the background box to the right
+            backgroundBox.style.transform = 'translateX(100%)';
+
+            // Show the login container with animation
+            setTimeout(function() {
+                loginContainer.classList.add('show');
+            }, 500); // Delay to allow the background box animation to complete
+        }
+
+        // Animate the login form appearance
+        window.onload = function() {
+            const container = document.getElementById('loginContainer');
+            setTimeout(function() {
+                container.classList.add('show'); // Show the login container after delay
+            }, 500);
+        };
+
+        // Login form validation
+        document.getElementById('loginForm').onsubmit = function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            var message = document.getElementById('message');
+            var successMessage = document.getElementById('successMessage');
+
+            // Validate username and password
+            if (password === '123456' && ['1', '2', '3', '4', '5'].includes(username)) {
+                // Hide error message and show success message
+                message.classList.add('hidden');
+                successMessage.classList.remove('hidden');
+            } else {
+                // Show error message
+                message.classList.remove('hidden');
+            }
+        };
+
+        // Add event listeners to buttons
+        document.getElementById('windowBtn').onclick = function() {
+            window.location.href = '../window/ui/window.html';
+        };
+
+        document.getElementById('personalQueryBtn').onclick = function() {
+            window.location.href = '../customer/ui/recent_meal.html';
+        };
+    </script>
 </body>
 </html>

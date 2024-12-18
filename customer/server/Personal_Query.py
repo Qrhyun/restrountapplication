@@ -8,8 +8,6 @@ from flask import Blueprint
 personal_query_app = Blueprint('personal_query', __name__)
 CORS(personal_query_app)
 
-
-
 @personal_query_app.route('/recent_meal', methods=['GET'])
 def recent_meal():
     user_id = request.args.get('user_id', type=int)

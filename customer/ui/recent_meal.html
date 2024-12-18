@@ -20,17 +20,21 @@
         body {
             margin: 0;
             font-family: 'Roboto', sans-serif;
+            background: #e8f5e9; /* Soft light green background for the entire page */
+            color: #333; /* Text color for contrast */
         }
 
         .v-application--wrap {
             min-height: 100vh;
-            background: #f4f5f7;
+            background: #e8f5e9; /* Apply the same background to the entire wrap */
         }
 
         .sidebar {
-            background: #3f51b5;
+            background: linear-gradient(to bottom, #4CAF50, #388E3C); /* Formal green gradient */
             color: white;
             height: 100%;
+            padding-top: 20px;
+            border-radius: 8px; /* Smooth corners for the sidebar */
         }
 
         .sidebar .v-list-item {
@@ -47,6 +51,7 @@
             background: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
         }
 
         .v-btn {
@@ -69,7 +74,7 @@
         }
 
         th {
-            background-color: #3f51b5;
+            background-color: #4CAF50;
             color: white;
         }
 
@@ -79,6 +84,10 @@
 
         tr:hover {
             background-color: #f1f1f1;
+        }
+
+        .v-alert {
+            border-radius: 8px;
         }
     </style>
 </head>
