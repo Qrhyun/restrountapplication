@@ -14,73 +14,217 @@
 
     <!-- Axios for API calls -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: #e8f5e9;
+            color: #333;
+        }
+
+        .v-application--wrap {
+            min-height: 100vh;
+            background: #e8f5e9;
+        }
+
+        .sidebar {
+            background: linear-gradient(to bottom, #4CAF50, #388E3C);
+            color: white;
+            height: 100%;
+            padding-top: 20px;
+            border-radius: 8px;
+        }
+
+        .sidebar .v-list-item {
+            color: white;
+            font-weight: bold;
+        }
+
+        .sidebar .v-list-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .content {
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .v-btn {
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .v-alert {
+            border-radius: 8px;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
         <v-app>
-            <v-container>
-                <h1 class="text-center">Data Query Portal</h1>
+            <v-container fluid>
+                <v-row>
+                    <!-- Sidebar -->
+                    <v-col cols="12" md="3" class="sidebar">
+                        <v-list dense>
+                            <v-list-item v-for="(item, index) in menuItems" :key="index" @click="currentMenu = index">
+                                <v-list-item-title>{{ item }}</v-list-item-title>
+                            </v-list-item>
+                        </v-list>
+                    </v-col>
 
-                <!-- View Data -->
-                <v-card outlined class="mb-5">
-                    <v-card-title>View Data by View Name</v-card-title>
-                    <v-card-text>
-                        <v-text-field
-                            v-model="viewName"
-                            label="Enter View Name"
-                            outlined
-                            dense
-                        ></v-text-field>
-                        <v-btn color="primary" @click="fetchViewData">Fetch View Data</v-btn>
-                    </v-card-text>
-                    <v-card-text v-if="viewData.length">
-                        <h3>Results:</h3>
-                        <pre>{{ viewData }}</pre>
-                    </v-card-text>
-                </v-card>
+                    <!-- Content -->
+                    <v-col cols="12" md="9">
+                        <div v-if="currentMenu === 0" class="content">
+                            <h2>View Data by View Name</h2>
+                            <v-text-field
+                                v-model="viewName"
+                                label="Enter View Name"
+                                outlined
+                                dense
+                            ></v-text-field>
+                            <v-btn color="primary" @click="fetchViewData" :disabled="!viewName" block>
+                                Fetch View Data
+                            </v-btn>
 
-                <!-- Total Win Veg Purchases -->
-                <v-card outlined class="mb-5">
-                    <v-card-title>Total Win Veg Purchases</v-card-title>
-                    <v-card-text>
-                        <v-text-field
-                            v-model="dishId"
-                            label="Enter Dish ID"
-                            type="number"
-                            outlined
-                            dense
-                        ></v-text-field>
-                        <v-btn color="secondary" @click="fetchTotalWinVegPurchases">Fetch Purchases</v-btn>
-                    </v-card-text>
-                    <v-card-text v-if="vegPurchases.length">
-                        <h3>Results:</h3>
-                        <pre>{{ vegPurchases }}</pre>
-                    </v-card-text>
-                </v-card>
+                            <div v-if="viewData.length > 0">
+                                <v-data-table
+                                    :headers="viewDataHeaders"
+                                    :items="viewData"
+                                    item-key="id"
+                                    :sort-by="'Vid'"
+                                    :sort-desc="false"
+                                >
+                                    <template v-slot:[`item.CookNames`]="{ item }">
+                                        <span>{{ item.CookNames }}</span>
+                                    </template>
+                                    <template v-slot:[`item.Vid`]="{ item }">
+                                        <span>{{ item.Vid }}</span>
+                                    </template>
+                                    <template v-slot:[`item.Vname`]="{ item }">
+                                        <span>{{ item.Vname }}</span>
+                                    </template>
+                                    <template v-slot:[`item.Vprice`]="{ item }">
+                                        <span>{{ item.Vprice }}</span>
+                                    </template>
+                                </v-data-table>
+                            </div>
+                        </div>
 
-                <!-- Top 5 Windows -->
-                <v-card outlined class="mb-5">
-                    <v-card-title>Top 5 Windows</v-card-title>
-                    <v-card-text>
-                        <v-btn color="success" @click="fetchTop5Windows">Fetch Top 5 Windows</v-btn>
-                    </v-card-text>
-                    <v-card-text v-if="topWindows.length">
-                        <h3>Results:</h3>
-                        <pre>{{ topWindows }}</pre>
-                    </v-card-text>
-                </v-card>
+                        <div v-if="currentMenu === 1" class="content">
+                            <h2>Total Win Veg Purchases</h2>
+                            <v-text-field
+                                v-model="dishId"
+                                label="Enter Dish ID"
+                                type="number"
+                                outlined
+                                dense
+                            ></v-text-field>
+                            <v-btn color="secondary" @click="fetchTotalWinVegPurchases" :disabled="!dishId" block>
+                                Fetch Purchases
+                            </v-btn>
 
-                <!-- Top 5 Veg Dishes -->
-                <v-card outlined>
-                    <v-card-title>Top 5 Vegetarian Dishes</v-card-title>
-                    <v-card-text>
-                        <v-btn color="success" @click="fetchTop5Veg">Fetch Top 5 Veg</v-btn>
-                    </v-card-text>
-                    <v-card-text v-if="topVeg.length">
-                        <h3>Results:</h3>
-                        <pre>{{ topVeg }}</pre>
-                    </v-card-text>
-                </v-card>
+                            <div v-if="vegPurchases.length > 0">
+                                <v-data-table
+                                    :headers="vegPurchasesHeaders"
+                                    :items="vegPurchases"
+                                    item-key="DishID"
+                                    :sort-by="'DishID'"
+                                    :sort-desc="false"
+                                >
+                                    <template v-slot:[`item.DishID`]="{ item }">
+                                        <span>{{ item.DishID }}</span>
+                                    </template>
+                                    <template v-slot:[`item.Quantity`]="{ item }">
+                                        <span>{{ item.Quantity }}</span>
+                                    </template>
+                                    <template v-slot:[`item.PurchaseDate`]="{ item }">
+                                        <span>{{ item.PurchaseDate }}</span>
+                                    </template>
+                                    <template v-slot:[`item.DishName`]="{ item }">
+                                        <span>{{ item.DishName }}</span>
+                                    </template>
+                                    <template v-slot:[`item.UserID`]="{ item }">
+                                        <span>{{ item.UserID }}</span>
+                                    </template>
+                                    <template v-slot:[`item.UserName`]="{ item }">
+                                        <span>{{ item.UserName }}</span>
+                                    </template>
+                                </v-data-table>
+                            </div>
+                        </div>
+
+                        <div v-if="currentMenu === 2" class="content">
+                            <h2>Top 5 Windows</h2>
+                            <v-btn color="success" @click="fetchTop5Windows" block>
+                                Fetch Top 5 Windows
+                            </v-btn>
+
+                            <div v-if="topWindows.length > 0">
+                                <v-data-table
+                                    :headers="topWindowsHeaders"
+                                    :items="topWindows"
+                                    item-key="Wid"
+                                    :sort-by="'Wid'"
+                                    :sort-desc="false"
+                                >
+                                    <template v-slot:[`item.Wid`]="{ item }">
+                                        <span>{{ item.Wid }}</span>
+                                    </template>
+                                    <template v-slot:[`item.Wadd`]="{ item }">
+                                        <span>{{ item.Wadd }}</span>
+                                    </template>
+                                    <template v-slot:[`item.PurchaseDate`]="{ item }">
+                                        <span>{{ item.PurchaseDate }}</span>
+                                    </template>
+                                    <template v-slot:[`item.Wremark`]="{ item }">
+                                        <span>{{ item.Wremark }}</span>
+                                    </template>
+                                    <template v-slot:[`item.cate`]="{ item }">
+                                        <span>{{ item.cate }}</span>
+                                    </template>
+                                </v-data-table>
+                            </div>
+                        </div>
+
+                        <div v-if="currentMenu === 3" class="content">
+                            <h2>Top 5 Vegetarian Dishes</h2>
+                            <v-btn color="success" @click="fetchTop5Veg" block>
+                                Fetch Top 5 Veg
+                            </v-btn>
+
+                            <div v-if="topVeg.length > 0">
+                                <v-data-table
+                                    :headers="topVegHeaders"
+                                    :items="topVeg"
+                                    item-key="DishID"
+                                    :sort-by="'DishID'"
+                                    :sort-desc="false"
+                                >
+                                    <template v-slot:[`item.DishName`]="{ item }">
+                                        <span>{{ item.DishName }}</span>
+                                    </template>
+                                    <template v-slot:[`item.DishID`]="{ item }">
+                                        <span>{{ item.DishID }}</span>
+                                    </template>
+                                    <template v-slot:[`item.Price`]="{ item }">
+                                        <span>{{ item.Price }}</span>
+                                    </template>
+                                    <template v-slot:[`item.Sales`]="{ item }">
+                                        <span>{{ item.Sales }}</span>
+                                    </template>
+                                    <template v-slot:[`item.Remark`]="{ item }">
+                                        <span>{{ item.Remark }}</span>
+                                    </template>
+                                </v-data-table>
+                            </div>
+                        </div>
+                    </v-col>
+                </v-row>
             </v-container>
         </v-app>
     </div>
@@ -93,12 +237,47 @@
             el: '#app',
             vuetify: new Vuetify(),
             data: {
+                currentMenu: 0,
+                menuItems: [
+                    'View Data by View Name',
+                    'Total Win Veg Purchases',
+                    'Top 5 Windows',
+                    'Top 5 Vegetarian Dishes'
+                ],
                 viewName: '',
                 dishId: '',
                 viewData: [],
                 vegPurchases: [],
                 topWindows: [],
-                topVeg: []
+                topVeg: [],
+                viewDataHeaders: [
+                    { text: 'CookNames', value: 'CookNames' },
+                    { text: 'Vid', value: 'Vid' },
+                    { text: 'Vname', value: 'Vname' },
+                    { text: 'Vprice', value: 'Vprice' }
+                ],
+                vegPurchasesHeaders: [
+                    { text: 'Dish ID', value: 'DishID' },
+                    { text: 'Quantity', value: 'Quantity' },
+                    { text: 'PurchaseDate', value: 'PurchaseDate' },
+                    { text: 'Dish Name', value: 'DishName' },
+                    { text: 'User ID', value: 'UserID' },
+                    { text: 'User Name', value: 'UserName' }
+                ],
+                topWindowsHeaders: [
+                    { text: 'Window ID', value: 'Wid' },
+                    { text: 'Wadd', value: 'Wadd' },
+                    { text: 'PurchaseDate', value: 'PurchaseDate' },
+                    { text: 'Wremark', value: 'Wremark' },
+                    { text: 'Category', value: 'cate' },
+                ],
+                topVegHeaders: [
+                    { text: 'Dish Name', value: 'DishName' },
+                    { text: 'Dish ID', value: 'DishID' },
+                    { text: 'Dish Price', value: 'Price' },
+                    { text: 'Sales', value: 'Sales' },
+                    { text: 'Remark', value: 'Remark' }
+                ]
             },
             methods: {
                 async fetchViewData() {
