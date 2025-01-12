@@ -10,53 +10,55 @@
             margin: 0;
             padding: 0;
             background: linear-gradient(to right, #4facfe, #00f2fe);
+            background-image: url('s.jpg'); /* Add your image URL here */
+            background-size: cover; /* Ensure the image covers the entire page */
+            background-position: center; /* Center the image */
+            background-attachment: fixed; /* Keep the background fixed when scrolling */
             color: #333;
             position: relative;
-            overflow-x: hidden; /* Prevent horizontal scrollbar */
-            transition: background 0.3s ease; /* Smooth background transition */
+            overflow-x: hidden;
+            transition: background 0.3s ease;
         }
 
         /* Sidebar */
         .sidebar {
-            width: 200px; /* Fixed width for the sidebar */
+            width: 200px;
             height: 100vh;
-            background: #4e8dbf; /* Soft, muted blue */
+            background: #4e8dbf;
             padding: 20px;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
             position: fixed;
             left: 0;
-            top: 0; /* Ensure sidebar starts from the very top */
+            top: 0;
             z-index: 1000;
             transition: transform 0.3s ease-in-out;
         }
 
-        /* Toggle button fixed to the right side */
         .toggle-button {
             position: fixed;
-            right: 20px;  /* Adjust button to the right */
-            top: 50px;    /* Button placed just below the top */
-            z-index: 1001; /* Ensure it's above the sidebar */
-            background: #4e8dbf; /* Same as sidebar */
+            right: 20px;
+            top: 50px;
+            z-index: 1001;
+            background: #4e8dbf;
             color: #fff;
             border: none;
-            border-radius: 50%; /* Make the button circular */
-            width: 50px;  /* Button width */
-            height: 50px; /* Button height */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
             cursor: pointer;
-            font-size: 30px; /* Larger icon size */
-            display: flex; /* Use flexbox */
-            justify-content: center; /* Center content horizontally */
-            align-items: center; /* Center content vertically */
+            font-size: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             transition: background-color 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
         }
 
         .toggle-button:hover {
-            background: #357ab7; /* Slightly lighter on hover */
+            background: #357ab7;
         }
 
         .toggle-button:active {
-            background: #28759f; /* Darker on click */
+            background: #28759f;
         }
 
         /* Main content */
@@ -66,27 +68,27 @@
             align-items: center;
             height: 100vh;
             padding: 40px;
-            margin-left: 220px; /* Make space for the sidebar */
+            margin-left: 220px;
         }
 
         /* Login container */
         .container {
             text-align: center;
-            background: rgba(255, 255, 255, 0.8); /* Slightly transparent white */
+            background: rgba(255, 255, 255, 0.8);
             padding: 20px 40px;
             border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             max-width: 400px;
             width: 100%;
-            transform: scale(0.9); /* Start smaller */
-            opacity: 0; /* Invisible initially */
+            transform: scale(0.9);
+            opacity: 0;
             transition: transform 0.5s ease, opacity 0.5s ease;
-            z-index: 2; /* Above the background box */
+            z-index: 2;
         }
 
         .container.show {
-            transform: scale(1); /* Expand to full size */
-            opacity: 1; /* Fade in */
+            transform: scale(1);
+            opacity: 1;
         }
 
         h1 {
@@ -106,11 +108,11 @@
 
         input[type="text"]:focus, input[type="password"]:focus {
             border-color: #4facfe;
-            box-shadow: 0 0 8px rgba(79, 172, 254, 0.7); /* Glowing effect */
+            box-shadow: 0 0 8px rgba(79, 172, 254, 0.7);
         }
 
         button {
-            background: #6ac6f1;  /* Soft blue for button */
+            background: #6ac6f1;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -123,11 +125,11 @@
         }
 
         button:hover {
-            background: #5cb4e1;  /* Lighter hover color */
+            background: #5cb4e1;
         }
 
         button:active {
-            background: #4fa3d1;  /* Darker on click */
+            background: #4fa3d1;
         }
 
         .hidden {
@@ -158,7 +160,7 @@
     <!-- Main Content Area -->
     <div class="main-content">
         <div class="container" id="loginContainer">
-            <h1>Login</h1>
+            <h1>restaurant</h1>
             <form id="loginForm">
                 <input type="text" id="username" placeholder="Username" required>
                 <input type="password" id="password" placeholder="Password" required>

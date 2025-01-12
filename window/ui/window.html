@@ -67,19 +67,15 @@
     <div id="app">
         <v-app>
             <v-container fluid>
-
-
                 <v-row>
                     <!-- Sidebar -->
                     <v-col cols="12" md="3" class="sidebar">
                         <v-list dense>
                             <v-list-item v-for="(item, index) in menuItems" :key="index" @click="currentMenu = index">
                                 <v-list-item-title>{{ item }}</v-list-item-title>
-                            </v-list-item>
+                            </v-list>
                         </v-list>
                     </v-col>
-
-
 
                     <!-- Content -->
                     <v-col cols="12" md="9">
@@ -227,6 +223,33 @@
                                 </v-data-table>
                             </div>
                         </div>
+
+                        <div v-if="currentMenu === 4" class="content">
+                            <h2>Top 3 Spenders in Last 30 Days</h2>
+                            <v-btn color="primary" @click="fetchTop3Spenders" block>
+                                Fetch Top 3 Spenders
+                            </v-btn>
+
+                            <div v-if="topSpenders.length > 0">
+                                <v-data-table
+                                    :headers="topSpendersHeaders"
+                                    :items="topSpenders"
+                                    item-key="Bid"
+                                    :sort-by="'TotalSpent'"
+                                    :sort-desc="true"
+                                >
+                                    <template v-slot:[`item.Bid`]="{ item }">
+                                        <span>{{ item.Bid }}</span>
+                                    </template>
+                                    <template v-slot:[`item.Bname`]="{ item }">
+                                        <span>{{ item.Bname }}</span>
+                                    </template>
+                                    <template v-slot:[`item.TotalSpent`]="{ item }">
+                                        <span>{{ item.TotalSpent }}</span>
+                                    </template>
+                                </v-data-table>
+                            </div>
+                        </div>
                     </v-col>
                 </v-row>
             </v-container>
@@ -246,7 +269,8 @@
                     'View Data by View Name',
                     'Total Win Veg Purchases',
                     'Top 5 Windows',
-                    'Top 5 Vegetarian Dishes'
+                    'Top 5 Vegetarian Dishes',
+                    'Top 3 Spenders'
                 ],
                 viewName: '',
                 dishId: '',
@@ -254,6 +278,7 @@
                 vegPurchases: [],
                 topWindows: [],
                 topVeg: [],
+                topSpenders: [],
                 viewDataHeaders: [
                     { text: 'CookNames', value: 'CookNames' },
                     { text: 'Vid', value: 'Vid' },
@@ -281,6 +306,11 @@
                     { text: 'Dish Price', value: 'Price' },
                     { text: 'Sales', value: 'Sales' },
                     { text: 'Remark', value: 'Remark' }
+                ],
+                topSpendersHeaders: [
+                    { text: 'Buyer ID', value: 'Bid' },
+                    { text: 'Buyer Name', value: 'Bname' },
+                    { text: 'Total Spent', value: 'TotalSpent' }
                 ]
             },
             methods: {
@@ -330,6 +360,15 @@
                     } catch (error) {
                         console.error(error);
                         alert('Error fetching top 5 vegetarian dishes.');
+                    }
+                },
+                async fetchTop3Spenders() {
+                    try {
+                        const response = await axios.get('http://127.0.0.1:5000/personal_query/top3_spenders');
+                        this.topSpenders = response.data;
+                    } catch (error) {
+                        console.error(error);
+                        alert('Error fetching top 3 spenders.');
                     }
                 }
             }
