@@ -146,5 +146,13 @@
         // 初始化页面
         fetchSeats();
     </script>
+<button id="backButton">返回首页</button>
+
+<script>
+    // 返回按钮点击事件
+    document.getElementById('backButton').onclick = function() {
+        window.location.href = 'index.html'; // 跳转到 templates/index.html
+    };
+</script>
 </body>
 </html>

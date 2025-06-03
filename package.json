@@ -1,0 +1,29 @@
+{
+  "name": "restrountapplication",
+  "version": "1.0.0",
+  "description": "```bash\r conda create --name restrount python=3.8\r conda activate restrount\r pip install flask mysql-connector-python\r pip install flask-cors\r ```",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "package-win": "electron-packager . restrountapplication --platform=win32 --arch=x64 --out=dist --overwrite",
+    "package-mac": "electron-packager . restrountapplication --platform=darwin --arch=universal --out=dist --overwrite",
+    "package-linux": "electron-packager . restrountapplication --platform=linux --arch=all --out=dist --overwrite",
+    "package-all": "electron-packager . restrountapplication --platform=all --arch=all --out=dist --overwrite",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Qrhyun/restrountapplication.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Qrhyun/restrountapplication/issues"
+  },
+  "homepage": "https://github.com/Qrhyun/restrountapplication#readme",
+  "devDependencies": {
+    "electron": "^25.9.8",
+    "electron-packager": "^17.1.0"
+  }
+}
