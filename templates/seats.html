@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>食堂座位预定</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        .seating {
+            display: grid;
+            grid-template-columns: repeat(10, 40px);
+            gap: 10px;
+        }
+
+        .seat {
+            width: 40px;
+            height: 40px;
+            background-color: #6ac6f1;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .seat.reserved {
+            background-color: #ff6b6b;
+            cursor: not-allowed;
+        }
+
+        .seat.selected {
+            background-color: #4caf50;
+        }
+
+        button {
+            background: #6ac6f1;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background: #5cb4e1;
+        }
+
+        button:active {
+            background: #4fa3d1;
+        }
+    </style>
+</head>
+<body>
+    <h1>食堂座位预定</h1>
+    <div class="controls">
+        <label for="canteenSelect">选择食堂：</label>
+        <select id="canteenSelect" onchange="fetchSeats()">
+            <option value="1">食堂 1</option>
+            <option value="2">食堂 2</option>
+            <option value="3">食堂 3</option>
+        </select>
+        <button onclick="fetchSeats()">刷新座位状态</button>
+    </div>
+    <div class="seating" id="seating"></div>
+
+    <script>
+        const seatingElement = document.getElementById('seating');
+        const canteenSelect = document.getElementById('canteenSelect');
+
+        // 获取座位状态
+        async function fetchSeats() {
+            const canteenId = canteenSelect.value;
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/window/seats?canteen_id=${canteenId}`);
+                const seats = await response.json();
+                renderSeats(seats);
+            } catch (error) {
+                console.error('获取座位状态失败:', error);
+            }
+        }
+
+        // 渲染座位
+        function renderSeats(seats) {
+            seatingElement.innerHTML = ''; // 清空座位
+            seats.forEach(seat => {
+                const seatElement = document.createElement('div');
+                seatElement.className = `seat ${seat.status === 'reserved' ? 'reserved' : ''}`;
+                seatElement.textContent = seat.seat_id;
+                seatElement.onclick = () => reserveSeat(seat.seat_id, seatElement);
+                seatingElement.appendChild(seatElement);
+            });
+        }
+
+        // 预定座位
+        async function reserveSeat(seatId, seatElement) {
+            if (seatElement.classList.contains('reserved')) {
+                alert('该座位已被预定！');
+                return;
+            }
+
+            const canteenId = canteenSelect.value;
+            try {
+                const response = await fetch('http://127.0.0.1:5000/window/reserve_seat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ canteen_id: parseInt(canteenId), seat_id: seatId })
+                });
+
+                if (response.ok) {
+                    seatElement.classList.add('reserved');
+                    alert(`座位 ${seatId} 预定成功！`);
+                } else {
+                    const error = await response.json();
+                    alert(error.error || '预定失败');
+                }
+            } catch (error) {
+                console.error('预定座位失败:', error);
+            }
+        }
+
+        // 初始化页面
+        fetchSeats();
+    </script>
+</body>
+</html>

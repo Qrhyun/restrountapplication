@@ -10,7 +10,7 @@
             margin: 0;
             padding: 0;
             background: linear-gradient(to right, #4facfe, #00f2fe);
-            background-image: url('s.jpg'); /* Add your image URL here */
+            /*background-image: url('s.jpg'); /* Add your image URL here */
             background-size: cover; /* Ensure the image covers the entire page */
             background-position: center; /* Center the image */
             background-attachment: fixed; /* Keep the background fixed when scrolling */
@@ -152,6 +152,7 @@
         <button id="loginBtn">Login</button>
         <button id="windowBtn">Window</button>
         <button id="personalQueryBtn">Personal</button>
+        <button id="seatsBtn">Seats</button>
     </div>
 
     <!-- Background box (before login box appears) -->
@@ -227,6 +228,9 @@
 
         document.getElementById('personalQueryBtn').onclick = function() {
             window.location.href = '../customer/ui/recent_meal.html';
+        };
+        document.getElementById('seatsBtn').onclick = function() {
+            window.location.href = 'seats.html';
         };
     </script>
 </body>

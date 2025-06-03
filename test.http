@@ -18,3 +18,24 @@ GET 127.0.0.1:5000/window/gettop5veg
 GET 127.0.0.1:5000/personal_query/dine_in?Bid=1&Vid=1&Bnum=10000
 ###top3_spenders
 GET 127.0.0.1:5000/personal_query/top3_spenders
+### GET 请求测试获取座位信息
+GET 127.0.0.1:5000/window/seats
+### post 请求测试预定座位接口
+POST http://127.0.0.1:5000/window/reserve_seat
+Content-Type: application/json
+
+{
+    "seat_id": 1
+}
+
+### GET 请求测试获取指定食堂的座位信息
+GET 127.0.0.1:5000/window/seats?canteen_id=2
+
+### POST 请求测试预定指定食堂的座位
+POST http://127.0.0.1:5000/window/reserve_seat
+Content-Type: application/json
+
+{
+    "canteen_id": 2,
+    "seat_id": 1
+}
